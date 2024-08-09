@@ -18,25 +18,22 @@
       <property-grid></property-grid>
     </q-drawer>
 
-    <q-page-container>
-    </q-page-container>
+    <q-page-container> </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import PageDocument from "../components/PageDocument.vue"
-import PropertyGrid from "../components/PropertyGrid.vue"
+import PageDocument from "../components/PageDocument.vue";
+import PropertyGrid from "../components/PropertyGrid.vue";
 export default {
-  name: 'MainLayout',
+  name: "MainLayout",
   components: { PageDocument, PropertyGrid },
   data() {
     return {
       leftDrawerOpen: true,
       rightDrawerOpen: true,
-    }
+    };
   },
-  created() {
-
-  }
-}
+  created() {},
+};
 </script>
