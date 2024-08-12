@@ -12,6 +12,7 @@
   </div>
 </template>
 <script>
+import { extend } from "quasar";
 export default {
   name: "Controller",
   props: {
@@ -51,7 +52,9 @@ export default {
       currentDir: null,
       blockDrag: false,
       inner_cmpObj: null,
-      startStatus: null,
+      cmpObjSnapShot: null,
+      thisSnapShot: null,
+      startPoint: null,
     };
   },
   watch: {
@@ -144,14 +147,11 @@ export default {
     mousedown(e, dir) {
       this.currentDir = dir;
       this.blockDrag = true;
-      this.startStatus = {
-        x: e.clientX,
-        y: e.clientY,
-        cmpX: this.inner_cmpObj.x,
-        cmpY: this.inner_cmpObj.y,
-        cmpW: this.inner_cmpObj.w,
-        cmpH: this.inner_cmpObj.h,
-      };
+      this.startPoint = [e.clientX, e.clientY];
+      this.cmpObjSnapShot = extend(true, {}, this.inner_cmpObj);
+      this.thisSnapShot = extend(true, {}, this.$props);
+
+      console.log(this.thisSnapShot);
 
       document.addEventListener("mousemove", this.mousemove);
       document.addEventListener("mouseup", this.mouseup);
@@ -160,22 +160,21 @@ export default {
       e.stopPropagation();
       if (this.blockDrag) {
         var endPoint = [e.clientX, e.clientY];
-        var movementX = endPoint[0] - this.startStatus.x;
-        var movementY = endPoint[1] - this.startStatus.y;
+        var movementX = endPoint[0] - this.startPoint[0];
+        var movementY = endPoint[1] - this.startPoint[1];
         for (var i = 0; i < this.currentDir.length; i++) {
           var s = this.currentDir[i];
           switch (s) {
             case "l":
-              var x = this.startStatus.cmpX + movementX;
-              console.log(e);
+              var x = this.cmpObjSnapShot.x + movementX;
               if (
                 x <
-                this.startStatus.cmpX + this.startStatus.cmpW - this.blockWidth
+                this.cmpObjSnapShot.x + this.cmpObjSnapShot.w - this.blockWidth
               ) {
                 this.inner_cmpObj.x = x;
-                this.inner_cmpObj.w = this.startStatus.cmpW - movementX;
-                this.$emit("update:x", this.inner_cmpObj.x);
-                this.$emit("update:w", this.inner_cmpObj.w);
+                this.inner_cmpObj.w = this.cmpObjSnapShot.w - movementX;
+                this.$emit("update:x", this.thisSnapShot.x + movementX);
+                this.$emit("update:w", this.thisSnapShot.w - movementX);
               }
               break;
             case "t":

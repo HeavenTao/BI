@@ -110,6 +110,7 @@ export default {
       //TODO:ht先考虑单个激活
       let toFind = this.findChildByUid([this.pageObj], event.uid);
       let position = this.getCmpAbsolutePosition(toFind);
+      console.log(position);
       this.controllerObj.x = position.x;
       this.controllerObj.y = position.y;
       this.controllerObj.w = toFind.w;
