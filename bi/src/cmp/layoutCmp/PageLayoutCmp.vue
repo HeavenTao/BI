@@ -1,5 +1,5 @@
 <template>
-  <div :style="style">
+  <div style="user-select: none" :style="style" v-on="cmpEvts()">
     <component
       v-for="child in childs"
       :is="child.type"

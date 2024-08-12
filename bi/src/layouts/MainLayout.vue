@@ -23,9 +23,10 @@
         <div class="col">
           <div
             :style="{ width: fullWidth + 'px', height: fullHeight + 'px' }"
-            style="background-color: white"
+            style="background-color: white; position: relative"
           >
             <page-layout-cmp v-bind="pageObj"></page-layout-cmp>
+            <controller v-bind.sync="controllerObj"></controller>
           </div>
         </div>
         <div class="row items-center justify-end q-py-xs">
@@ -62,9 +63,11 @@ import PropertyGrid from "../components/PropertyGrid.vue";
 import PageLayoutCmp from "src/cmp/layoutCmp/PageLayoutCmp.vue";
 import PageLayoutCmpObj from "src/cmpobj/layoutCmpObj/pageLayoutCmpObj";
 import TextCmpObj from "src/cmpobj/basicCmpObj/textCmpObj";
+import Controller from "src/components/Controller.vue";
+import mitt from "mitt";
 export default {
   name: "MainLayout",
-  components: { PageDocument, PropertyGrid, PageLayoutCmp },
+  components: { PageDocument, PropertyGrid, PageLayoutCmp, Controller },
   data() {
     return {
       scale: 100,
@@ -73,21 +76,73 @@ export default {
       fullWidth: 1000,
       fullHeight: 650,
       pageObj: new PageLayoutCmpObj(),
+      controllerObj: {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0,
+        isShow: false,
+      },
     };
   },
   created() {
+    var eventBus = mitt();
+    eventBus.on("active", this.active);
     this.pageObj.w = this.fullWidth;
     this.pageObj.h = this.fullHeight;
+    this.pageObj.eventBus = eventBus;
+    this.pageObj.zIndex = 0;
 
     var textCmpObj = new TextCmpObj();
+    //textCmpObj.loadSetting({});
     textCmpObj.x = 100;
     textCmpObj.y = 100;
     textCmpObj.w = 120;
     textCmpObj.h = 30;
     textCmpObj.backgroundStyle.color = "lightblue";
+    textCmpObj.parent = this.pageObj;
+    textCmpObj.eventBus = eventBus;
+    textCmpObj.zIndex = 1;
     this.pageObj.childs.push(textCmpObj);
   },
   methods: {
+    active(event) {
+      //TODO:ht先考虑单个激活
+      let toFind = this.findChildByUid([this.pageObj], event.uid);
+      let position = this.getCmpAbsolutePosition(toFind);
+      this.controllerObj.x = position.x;
+      this.controllerObj.y = position.y;
+      this.controllerObj.w = toFind.w;
+      this.controllerObj.h = toFind.h;
+      this.controllerObj.isShow = true;
+      this.controllerObj.zIndex = toFind.zIndex;
+      this.controllerObj.cmpObj = toFind;
+    },
+    findChildByUid(tree, uid) {
+      for (let node of tree) {
+        if (node.uid === uid) {
+          return node;
+        } else if (node.childs && node.childs.length > 0) {
+          const result = this.findChildByUid(node.childs, uid);
+          if (result) {
+            return result;
+          }
+        }
+      }
+      return null;
+    },
+    getCmpAbsolutePosition(cmp) {
+      var position = {
+        x: cmp.x,
+        y: cmp.y,
+      };
+      if (cmp.parent) {
+        var parentPosition = this.getCmpAbsolutePosition(cmp.parent);
+        position.x += parentPosition.x;
+        position.y += parentPosition.y;
+      }
+      return position;
+    },
     minusScale() {},
     plusScale() {},
   },

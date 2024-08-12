@@ -1,6 +1,7 @@
 import dockEnum from "src/enums/dockEnum";
 import Common from "src/utils/common";
 export default class ComponentObjBase {
+  parent;
   uid;
   name;
   w;
@@ -16,8 +17,10 @@ export default class ComponentObjBase {
   borderStyle;
   backgroundStyle;
   type;
+  eventBus;
 
   constructor() {
+    this.parent = null;
     this.uid = Common.getUid();
 
     this.w = 100;
@@ -106,7 +109,6 @@ export default class ComponentObjBase {
   }
 
   loadSetting(setting) {}
-
   saveSetting() {
     return "";
   }

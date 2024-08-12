@@ -1,5 +1,5 @@
 <template>
-  <div :style="style">{{ text }}</div>
+  <div :style="style" v-on="cmpEvts()">{{ text }}</div>
 </template>
 
 <script>

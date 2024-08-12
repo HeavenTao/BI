@@ -62,6 +62,10 @@ export default {
       type: String,
       default: "absolute",
     },
+    eventBus: {
+      type: Object,
+      default: null,
+    },
   },
   computed: {
     style() {
@@ -71,6 +75,7 @@ export default {
         top: this.y + "px",
         width: this.w + "px",
         height: this.h + "px",
+        zIndex: this.zIndex,
       };
 
       var backgroundStyle = this.getBackgroundStyle();
@@ -90,6 +95,17 @@ export default {
         }
       }
       return style;
+    },
+    cmpEvts() {
+      return {
+        click: this.click,
+      };
+    },
+    click(e) {
+      e.stopPropagation();
+      if (this.eventBus) {
+        this.eventBus.emit("active", { event: e, uid: this.uid });
+      }
     },
   },
 };
