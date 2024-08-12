@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-tabs v-model="tab" class="text-teal" dense>
-      <q-tab dense name="page" label="Page" />
-      <q-tab dense name="component" label="Compoments" />
+    <q-tabs v-model="tab" dense>
+      <q-tab dense name="page" label="页面文档" />
+      <q-tab dense name="component" label="组件库" />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="page"> page </q-tab-panel>
@@ -21,7 +21,7 @@ export default {
       tab: "component",
       components: [
         {
-          label: "basic",
+          label: "基本图形",
           children: [
             {
               label: "line",
@@ -29,7 +29,7 @@ export default {
           ],
         },
         {
-          label: "standard",
+          label: "基本组件",
           children: [
             {
               label: "input",
@@ -37,7 +37,15 @@ export default {
           ],
         },
         {
-          label: "group",
+          label: "图表组件",
+          children: [
+            {
+              label: "input",
+            },
+          ],
+        },
+        {
+          label: "布局组件",
           children: [],
         },
       ],

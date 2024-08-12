@@ -1,9 +1,16 @@
 <template>
   <div>
-    <q-tabs v-model="tab" class="text-teal">
-      <q-tab name="layout" label="Mails" />
-      <q-tab name="style" label="Alarms" />
-      <q-tab name="data" label="Movies" />
+    <q-tabs
+      dense
+      active-bg-color="primary"
+      active-color="white"
+      indicator-color="primary"
+      v-model="tab"
+    >
+      <q-tab name="style" label="样式" />
+      <q-tab name="layout" label="布局" />
+      <q-tab name="data" label="数据" />
+      <q-tab name="event" label="交互" />
     </q-tabs>
   </div>
 </template>
