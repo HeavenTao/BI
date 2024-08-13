@@ -1,18 +1,61 @@
 <template>
-  <div style="pointer-events: none" v-if="isShow" v-bind:style="style">
+  <div
+    style="pointer-events: none; overflow: visible"
+    v-if="isShow"
+    v-bind:style="style"
+  >
     <div :style="boundStyle"></div>
-    <div v-bind:style="lStyle" v-on:mousedown="mousedown($event, 'l')"></div>
-    <div v-bind:style="tStyle"></div>
-    <div v-bind:style="rStyle"></div>
-    <div v-bind:style="bStyle"></div>
-    <div v-bind:style="ltStyle"></div>
-    <div v-bind:style="rtStyle"></div>
-    <div v-bind:style="rbStyle"></div>
-    <div v-bind:style="lbStyle"></div>
+    <div
+      v-bind:style="lStyle"
+      v-on:mousedown="mousedown($event, 'l')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="tStyle"
+      v-on:mousedown="mousedown($event, 't')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="rStyle"
+      v-on:mousedown="mousedown($event, 'r')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="bStyle"
+      v-on:mousedown="mousedown($event, 'b')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="ltStyle"
+      v-on:mousedown="mousedown($event, 'lt')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="rtStyle"
+      v-on:mousedown="mousedown($event, 'rt')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="rbStyle"
+      v-on:mousedown="mousedown($event, 'rb')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="lbStyle"
+      v-on:mousedown="mousedown($event, 'lb')"
+      v-on:dragstart="onDragStart"
+    ></div>
+    <div
+      v-bind:style="moveStyle"
+      v-on:mousedown="mousedown($event, 'm')"
+      v-on:dragstart="onDragStart"
+    >
+      <q-icon name="mdi-cursor-move" size="sm"></q-icon>
+    </div>
   </div>
 </template>
 <script>
-import { extend } from "quasar";
+import { extend, debounce } from "quasar";
 export default {
   name: "Controller",
   props: {
@@ -47,8 +90,10 @@ export default {
   },
   data() {
     return {
-      blockHeight: 8,
-      blockWidth: 8,
+      blockHeight: 10,
+      blockWidth: 10,
+      moveBlockHeight: 20,
+      moveBlockWidth: 20,
       currentDir: null,
       blockDrag: false,
       inner_cmpObj: null,
@@ -57,6 +102,7 @@ export default {
       startPoint: null,
     };
   },
+  created() {},
   watch: {
     cmpObj(nv) {
       this.inner_cmpObj = nv;
@@ -142,8 +188,21 @@ export default {
       basicStyle.cursor = "nesw-resize";
       return basicStyle;
     },
+    moveStyle: function () {
+      return {
+        pointerEvents: "auto",
+        position: "absolute",
+        width: this.moveBlockWidth + "px",
+        height: this.moveBlockHeight + "px",
+        left: this.w / 2 - this.moveBlockWidth / 2 + "px",
+        top: this.h / 2 - this.moveBlockHeight / 2 + "px",
+      };
+    },
   },
   methods: {
+    onDragStart(e) {
+      e.preventDefault();
+    },
     mousedown(e, dir) {
       this.currentDir = dir;
       this.blockDrag = true;
@@ -151,17 +210,18 @@ export default {
       this.cmpObjSnapShot = extend(true, {}, this.inner_cmpObj);
       this.thisSnapShot = extend(true, {}, this.$props);
 
-      console.log(this.thisSnapShot);
-
-      document.addEventListener("mousemove", this.mousemove);
+      document.removeEventListener("mousemove", this.mousemove);
+      document.removeEventListener("mouseup", this.mouseup);
       document.addEventListener("mouseup", this.mouseup);
+      document.addEventListener("mousemove", this.mousemove);
     },
     mousemove(e) {
+      e.preventDefault();
       e.stopPropagation();
-      if (this.blockDrag) {
-        var endPoint = [e.clientX, e.clientY];
-        var movementX = endPoint[0] - this.startPoint[0];
-        var movementY = endPoint[1] - this.startPoint[1];
+
+      if (e.buttons === 1 && this.blockDrag) {
+        var movementX = e.clientX - this.startPoint[0];
+        var movementY = e.clientY - this.startPoint[1];
         for (var i = 0; i < this.currentDir.length; i++) {
           var s = this.currentDir[i];
           switch (s) {
@@ -178,32 +238,51 @@ export default {
               }
               break;
             case "t":
-              var y = this.y + e.movementY;
-              if (y < this.y + this.h - this.blockHeight) {
+              var y = this.cmpObjSnapShot.y + movementY;
+              if (
+                y <
+                this.cmpObjSnapShot.y + this.cmpObjSnapShot.h - this.blockHeight
+              ) {
+                this.inner_cmpObj.y = y;
+                this.inner_cmpObj.h = this.cmpObjSnapShot.h - movementY;
+                this.$emit("update:y", this.thisSnapShot.y + movementY);
+                this.$emit("update:h", this.thisSnapShot.h - movementY);
               }
               break;
             case "r":
-              var x = this.x + this.w + e.movementX;
-              if (x > this.x + this.blockWidth) {
+              var x = this.cmpObjSnapShot.x + this.cmpObjSnapShot.w + movementX;
+              if (x > this.cmpObjSnapShot.x + this.blockWidth) {
+                this.inner_cmpObj.w = this.cmpObjSnapShot.w + movementX;
+                this.$emit("update:w", this.thisSnapShot.w + movementX);
               }
               break;
             case "b":
-              var y = this.y + this.h + e.movementY;
-              if (y > this.y + this.blockHeight) {
+              var y = this.cmpObjSnapShot.y + this.cmpObjSnapShot.h + movementY;
+              if (y > this.cmpObjSnapShot.y + this.blockHeight) {
+                this.inner_cmpObj.h = this.cmpObjSnapShot.h + movementY;
+                this.$emit("update:h", this.thisSnapShot.h + movementY);
               }
               break;
             case "m":
-              var y = this.y + e.movementY;
-              var x = this.x + e.movementX;
+              this.inner_cmpObj.x = this.cmpObjSnapShot.x + movementX;
+              this.inner_cmpObj.y = this.cmpObjSnapShot.y + movementY;
+              this.$emit("update:x", this.thisSnapShot.x + movementX);
+              this.$emit("update:y", this.thisSnapShot.y + movementY);
               break;
           }
         }
+      } else {
+        console.log("Unvalid Move", e.buttons, this.blockDrag);
+        this.blockDrag = false;
+        document.removeEventListener("mousemove", this.mousemove);
+        document.removeEventListener("mouseup", this.mouseup);
       }
     },
     mouseup() {
+      console.log("mouseup");
       this.blockDrag = false;
       document.removeEventListener("mousemove", this.mousemove);
-      document.removeEventListener("mouteup", this.mouseup);
+      document.removeEventListener("mouseup", this.mouseup);
     },
     getBasicBlockStyle: function () {
       return {
