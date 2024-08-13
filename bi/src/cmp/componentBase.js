@@ -97,11 +97,16 @@ export default {
       return style;
     },
     cmpEvts() {
-      return {
-        click: this.click,
+      var evts = {
+        click: this.onClick,
       };
+      extend(true, evts, this.cmpEvtsEx());
+      return evts;
     },
-    click(e) {
+    cmpEvtsEx() {
+      return {};
+    },
+    onClick(e) {
       e.stopPropagation();
       if (this.eventBus) {
         this.eventBus.emit("active", { event: e, uid: this.uid });

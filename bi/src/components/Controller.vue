@@ -6,46 +6,55 @@
   >
     <div :style="boundStyle"></div>
     <div
+      v-show="candrag"
       v-bind:style="lStyle"
       v-on:mousedown="mousedown($event, 'l')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="tStyle"
       v-on:mousedown="mousedown($event, 't')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="rStyle"
       v-on:mousedown="mousedown($event, 'r')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="bStyle"
       v-on:mousedown="mousedown($event, 'b')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="ltStyle"
       v-on:mousedown="mousedown($event, 'lt')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="rtStyle"
       v-on:mousedown="mousedown($event, 'rt')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="rbStyle"
       v-on:mousedown="mousedown($event, 'rb')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="lbStyle"
       v-on:mousedown="mousedown($event, 'lb')"
       v-on:dragstart="onDragStart"
     ></div>
     <div
+      v-show="candrag"
       v-bind:style="moveStyle"
       v-on:mousedown="mousedown($event, 'm')"
       v-on:dragstart="onDragStart"
@@ -100,12 +109,13 @@ export default {
       cmpObjSnapShot: null,
       thisSnapShot: null,
       startPoint: null,
+      candrag: false,
     };
   },
   created() {},
   watch: {
     cmpObj(nv) {
-      this.inner_cmpObj = nv;
+      this.cmpObjChanged(nv);
     },
   },
   computed: {
@@ -200,6 +210,10 @@ export default {
     },
   },
   methods: {
+    cmpObjChanged(nv) {
+      this.inner_cmpObj = nv;
+      this.candrag = this.inner_cmpObj.draggable;
+    },
     onDragStart(e) {
       e.preventDefault();
     },
@@ -279,7 +293,6 @@ export default {
       }
     },
     mouseup() {
-      console.log("mouseup");
       this.blockDrag = false;
       document.removeEventListener("mousemove", this.mousemove);
       document.removeEventListener("mouseup", this.mouseup);

@@ -25,7 +25,7 @@ export default {
     },
     position: {
       type: String,
-      default: "relative",
+      default: "absolute",
     },
   },
 };

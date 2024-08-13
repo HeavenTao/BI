@@ -1,7 +1,9 @@
+import { extend } from "quasar";
 import dockEnum from "src/enums/dockEnum";
 import Common from "src/utils/common";
 export default class ComponentObjBase {
   parent;
+  parentUid;
   uid;
   name;
   w;
@@ -13,6 +15,7 @@ export default class ComponentObjBase {
   zIndex;
   isDesign;
   active;
+  draggable;
   lock;
   borderStyle;
   backgroundStyle;
@@ -30,6 +33,7 @@ export default class ComponentObjBase {
     this.dock = dockEnum.None.value;
     this.anchor = [];
     this.zIndex = 0;
+    this.draggable = true;
     this.isDesign = true;
     this.active = false;
     this.lock = false;
@@ -108,8 +112,60 @@ export default class ComponentObjBase {
     };
   }
 
-  loadSetting(setting) {}
-  saveSetting() {
-    return "";
+  load(config) {
+    for (let key in config) {
+      if (key in this) {
+        if (key === "childs") {
+          config[key].forEach((x) => {
+            let cmpObj = Common.newCmpObj(x.type);
+            cmpObj.eventBus = this.eventBus;
+            cmpObj.load(x);
+            this[key].push(cmpObj);
+            this.childs[this.childs.length - 1].load(x);
+          });
+        } else {
+          this[key] = config[key];
+        }
+      }
+    }
+  }
+  safeCopy(value) {
+    if (Array.isArray(value)) {
+      return extend(true, [], value);
+    } else if (typeof value === "object") {
+      return extend(true, {}, value);
+    } else {
+      return value;
+    }
+  }
+  getNotSaveProperties() {
+    let notSave = [
+      "active",
+      "parent",
+      "isDesign",
+      "draggable",
+      "lock",
+      "eventBus",
+    ];
+    return notSave;
+  }
+  save() {
+    let notSave = this.getNotSaveProperties();
+    let config = {};
+    for (let key in this) {
+      if (!notSave.includes(key)) {
+        config[key] = this.safeCopy(this[key]);
+      }
+    }
+
+    if (this.childs && this.childs.length > 0) {
+      config.childs = [];
+      this.childs.forEach((x) => {
+        let childConfig = x.save();
+        config.childs.push(childConfig);
+      });
+    }
+
+    return config;
   }
 }

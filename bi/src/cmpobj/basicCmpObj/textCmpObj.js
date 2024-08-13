@@ -1,3 +1,4 @@
+import { extend } from "quasar";
 import ComponentObjBase from "../componentObjBase";
 
 export default class TextCmpObj extends ComponentObjBase {

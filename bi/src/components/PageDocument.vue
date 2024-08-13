@@ -7,12 +7,24 @@
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="page"> page </q-tab-panel>
       <q-tab-panel name="component">
-        <q-tree :nodes="components" node-key="label" />
+        <q-tree :nodes="components" node-key="label">
+          <template v-slot:default-header="prop">
+            <div
+              class="row items-center"
+              v-on:dragstart="onDragStart(prop.node, $event)"
+              draggable="true"
+              style="cursor: move"
+            >
+              <div>{{ prop.node.label }}</div>
+            </div>
+          </template>
+        </q-tree>
       </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
 <script>
+import Common from "src/utils/common";
 export default {
   name: "PageDocument",
   props: {},
@@ -32,7 +44,8 @@ export default {
           label: "基本组件",
           children: [
             {
-              label: "input",
+              type: "TextCmp",
+              label: "TextCmp",
             },
           ],
         },
@@ -51,7 +64,25 @@ export default {
       ],
     };
   },
-  methods: {},
+  methods: {
+    onDragStart(node, e) {
+      let item = Common.newCmpObj(node.type);
+
+      if (item == null) {
+        return;
+      }
+
+      var data = {
+        child: item.save(),
+        info: {
+          dragOffsetX: e.offsetX,
+          dragOffsetY: e.offsetY,
+          fromLayoutUid: 0,
+        },
+      };
+      e.dataTransfer.setData("text/plain", JSON.stringify(data));
+    },
+  },
 };
 </script>
 
