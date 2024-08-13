@@ -92,8 +92,8 @@ export default {
     return {
       blockHeight: 10,
       blockWidth: 10,
-      moveBlockHeight: 20,
-      moveBlockWidth: 20,
+      moveBlockHeight: 24,
+      moveBlockWidth: 24,
       currentDir: null,
       blockDrag: false,
       inner_cmpObj: null,
