@@ -1,5 +1,4 @@
 import ComponentObjBase from "./componentObjBase";
-import { extend } from "quasar";
 
 export default class LayoutComponentBase extends ComponentObjBase {
   childs;

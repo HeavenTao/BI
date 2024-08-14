@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import Common from "src/utils/common";
+import designHelper from "src/cmpobj/designHelper";
 export default {
   name: "PageDocument",
   props: {},
@@ -66,21 +66,7 @@ export default {
   },
   methods: {
     onDragStart(node, e) {
-      let item = Common.newCmpObj(node.type);
-
-      if (item == null) {
-        return;
-      }
-
-      var data = {
-        child: item.save(),
-        info: {
-          dragOffsetX: e.offsetX,
-          dragOffsetY: e.offsetY,
-          fromLayoutUid: 0,
-        },
-      };
-      e.dataTransfer.setData("text/plain", JSON.stringify(data));
+      designHelper.cmpLibDragStart(node, e);
     },
   },
 };

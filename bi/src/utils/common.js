@@ -7,7 +7,7 @@ const Common = {
     var reg = /-/g;
     return "uid" + uid().replace(reg, "");
   },
-  newCmpObj(type) {
+  createCmpObjByType(type) {
     switch (type) {
       case "TextCmp":
         return new TextCmpObj();

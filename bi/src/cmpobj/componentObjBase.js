@@ -14,7 +14,6 @@ export default class ComponentObjBase {
   anchor;
   zIndex;
   isDesign;
-  active;
   draggable;
   lock;
   borderStyle;
@@ -35,7 +34,6 @@ export default class ComponentObjBase {
     this.zIndex = 0;
     this.draggable = true;
     this.isDesign = true;
-    this.active = false;
     this.lock = false;
     this.borderStyle = {
       borderType: "normal", //normal:传统边框 //decoration:装饰器,
@@ -117,7 +115,7 @@ export default class ComponentObjBase {
       if (key in this) {
         if (key === "childs") {
           config[key].forEach((x) => {
-            let cmpObj = Common.newCmpObj(x.type);
+            let cmpObj = Common.createCmpObjByType(x.type);
             cmpObj.eventBus = this.eventBus;
             cmpObj.load(x);
             this[key].push(cmpObj);
@@ -139,14 +137,7 @@ export default class ComponentObjBase {
     }
   }
   getNotSaveProperties() {
-    let notSave = [
-      "active",
-      "parent",
-      "isDesign",
-      "draggable",
-      "lock",
-      "eventBus",
-    ];
+    let notSave = ["parent", "isDesign", "draggable", "lock", "eventBus"];
     return notSave;
   }
   save() {

@@ -64,34 +64,11 @@
   </div>
 </template>
 <script>
-import { extend, debounce } from "quasar";
+import designHelper from "src/cmpobj/designHelper";
+import { extend } from "quasar";
 export default {
   name: "Controller",
   props: {
-    x: {
-      type: Number,
-      default: 0,
-    },
-    y: {
-      type: Number,
-      default: 0,
-    },
-    w: {
-      type: Number,
-      default: 0,
-    },
-    h: {
-      type: Number,
-      default: 0,
-    },
-    isShow: {
-      type: Boolean,
-      default: false,
-    },
-    zIndex: {
-      type: Number,
-      default: 0,
-    },
     cmpObj: {
       type: Object,
       default: null,
@@ -99,6 +76,11 @@ export default {
   },
   data() {
     return {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+      isShow: false,
       blockHeight: 10,
       blockWidth: 10,
       moveBlockHeight: 24,
@@ -137,7 +119,6 @@ export default {
         top: this.y + "px",
         width: this.w + "px",
         height: this.h + "px",
-        zIndex: this.zIndex,
       };
 
       return layoutStyle;
@@ -213,6 +194,12 @@ export default {
     cmpObjChanged(nv) {
       this.inner_cmpObj = nv;
       this.candrag = this.inner_cmpObj.draggable;
+      var position = designHelper.getCmpAbsolutePosition(this.inner_cmpObj);
+      this.x = position.x;
+      this.y = position.y;
+      this.w = this.inner_cmpObj.w;
+      this.h = this.inner_cmpObj.h;
+      this.isShow = true;
     },
     onDragStart(e) {
       e.preventDefault();
@@ -222,7 +209,7 @@ export default {
       this.blockDrag = true;
       this.startPoint = [e.clientX, e.clientY];
       this.cmpObjSnapShot = extend(true, {}, this.inner_cmpObj);
-      this.thisSnapShot = extend(true, {}, this.$props);
+      this.thisSnapShot = extend(true, {}, this.$data);
 
       document.removeEventListener("mousemove", this.mousemove);
       document.removeEventListener("mouseup", this.mouseup);
@@ -247,8 +234,8 @@ export default {
               ) {
                 this.inner_cmpObj.x = x;
                 this.inner_cmpObj.w = this.cmpObjSnapShot.w - movementX;
-                this.$emit("update:x", this.thisSnapShot.x + movementX);
-                this.$emit("update:w", this.thisSnapShot.w - movementX);
+                this.x = this.thisSnapShot.x + movementX;
+                this.w = this.thisSnapShot.w - movementX;
               }
               break;
             case "t":
@@ -259,29 +246,29 @@ export default {
               ) {
                 this.inner_cmpObj.y = y;
                 this.inner_cmpObj.h = this.cmpObjSnapShot.h - movementY;
-                this.$emit("update:y", this.thisSnapShot.y + movementY);
-                this.$emit("update:h", this.thisSnapShot.h - movementY);
+                this.y = this.thisSnapShot.y + movementY;
+                this.h = this.thisSnapShot.h - movementY;
               }
               break;
             case "r":
               var x = this.cmpObjSnapShot.x + this.cmpObjSnapShot.w + movementX;
               if (x > this.cmpObjSnapShot.x + this.blockWidth) {
                 this.inner_cmpObj.w = this.cmpObjSnapShot.w + movementX;
-                this.$emit("update:w", this.thisSnapShot.w + movementX);
+                this.w = this.thisSnapShot.w + movementX;
               }
               break;
             case "b":
               var y = this.cmpObjSnapShot.y + this.cmpObjSnapShot.h + movementY;
               if (y > this.cmpObjSnapShot.y + this.blockHeight) {
                 this.inner_cmpObj.h = this.cmpObjSnapShot.h + movementY;
-                this.$emit("update:h", this.thisSnapShot.h + movementY);
+                this.h = this.thisSnapShot.h + movementY;
               }
               break;
             case "m":
               this.inner_cmpObj.x = this.cmpObjSnapShot.x + movementX;
               this.inner_cmpObj.y = this.cmpObjSnapShot.y + movementY;
-              this.$emit("update:x", this.thisSnapShot.x + movementX);
-              this.$emit("update:y", this.thisSnapShot.y + movementY);
+              this.x = this.thisSnapShot.x + movementX;
+              this.y = this.thisSnapShot.y + movementY;
               break;
           }
         }

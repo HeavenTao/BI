@@ -1,4 +1,3 @@
-import { extend } from "quasar";
 import AbsoluteLayoutCmpObj from "./absoluteLayoutCmpObj";
 export default class PageLayoutCmpObj extends AbsoluteLayoutCmpObj {
   showGrid;

@@ -176,7 +176,7 @@
         <div class="col">
           <design-area
             :style="{ width: fullWidth + 'px', height: fullHeight + 'px' }"
-            v-bind:page-obj="pageObj"
+            :page-obj="cmpObjTree"
           >
           </design-area>
         </div>
@@ -211,9 +211,8 @@
 <script>
 import PageDocument from "../components/PageDocument.vue";
 import PropertyGrid from "../components/PropertyGrid.vue";
-import Common from "src/utils/common";
 import DesignArea from "src/components/DesignArea.vue";
-import mitt from "mitt";
+import designHelper from "src/cmpobj/designHelper";
 import dataJson from "src/data";
 export default {
   name: "MainLayout",
@@ -225,62 +224,21 @@ export default {
       rightDrawerOpen: true,
       fullWidth: 1000,
       fullHeight: 650,
-      pageObj: null,
-      controllerObj: {
-        x: 0,
-        y: 0,
-        w: 0,
-        h: 0,
-        isShow: false,
-      },
+      cmpObjTree: designHelper.cmpObjTree,
     };
   },
   created() {
-    // var eventBus = mitt();
-    // eventBus.on("active", this.active);
-    // this.pageObj.w = this.fullWidth;
-    // this.pageObj.h = this.fullHeight;
-    // this.pageObj.eventBus = eventBus;
-    // this.pageObj.zIndex = 0;
-    // var textCmpObj = new TextCmpObj();
-    // //textCmpObj.loadSetting({});
-    // textCmpObj.x = 100;
-    // textCmpObj.y = 100;
-    // textCmpObj.w = 120;
-    // textCmpObj.h = 30;
-    // textCmpObj.backgroundStyle.color = "lightblue";
-    // textCmpObj.parent = this.pageObj;
-    // textCmpObj.eventBus = eventBus;
-    // textCmpObj.zIndex = 1;
-    // this.pageObj.childs.push(textCmpObj);
+    designHelper.outterEventBus.on("cmpObjTreeChanged", (e) => {
+      this.cmpObjTree = e;
+    });
   },
   mounted() {
-    //请求数据
-    let pageObj = null;
-    let eventBus = mitt();
     const data = this.loadData();
-    if (data) {
-      pageObj = Common.newCmpObj("PageLayoutCmp");
-      pageObj.eventBus = eventBus;
-      pageObj.load(data);
-    } else {
-      pageObj = this.initPageCmpObj();
-      pageObj.eventBus = eventBus;
-    }
-
-    this.pageObj = pageObj;
+    designHelper.loadConfig(data);
   },
   methods: {
     save() {
-      let config = this.pageObj.save();
-      console.log(JSON.stringify(config));
-    },
-    initPageCmpObj() {
-      const pageCmpObj = Common.newCmpObj("PageLayoutCmp");
-      pageCmpObj.w = this.fullWidth;
-      pageCmpObj.h = this.fullHeight;
-
-      return pageCmpObj;
+      designHelper.saveConfig();
     },
     loadData() {
       return dataJson.getData();
