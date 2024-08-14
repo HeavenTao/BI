@@ -115,7 +115,7 @@
               </q-btn>
             </q-btn-group>
             <q-separator vertical dark></q-separator>
-            <q-btn dense flat icon="mdi-delete">
+            <q-btn dense flat icon="mdi-delete" @click="del">
               <q-tooltip>删除</q-tooltip>
             </q-btn>
             <q-btn dense flat icon="mdi-undo">
@@ -127,10 +127,10 @@
             <q-btn dense flat icon="mdi-content-cut">
               <q-tooltip>剪切</q-tooltip>
             </q-btn>
-            <q-btn dense flat icon="mdi-content-copy">
+            <q-btn dense flat icon="mdi-content-copy" @click="copy">
               <q-tooltip>复制</q-tooltip>
             </q-btn>
-            <q-btn dense flat icon="mdi-content-paste">
+            <q-btn dense flat icon="mdi-content-paste" @click="paste">
               <q-tooltip>粘贴</q-tooltip>
             </q-btn>
             <q-btn dense flat icon="mdi-lock">
@@ -237,6 +237,15 @@ export default {
     designHelper.loadConfig(data);
   },
   methods: {
+    copy() {
+      designHelper.copy();
+    },
+    paste() {
+      designHelper.paste();
+    },
+    del() {
+      designHelper.delActive();
+    },
     save() {
       designHelper.saveConfig();
     },

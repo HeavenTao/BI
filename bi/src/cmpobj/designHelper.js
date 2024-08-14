@@ -5,6 +5,7 @@ export default {
   outterEventBus: mitt(),
   cmpObjTree: null,
   activeCmp: null,
+  copyObj: null,
   loadConfig(config) {
     if (config) {
       this.initEmptyTree();
@@ -60,10 +61,38 @@ export default {
     };
     e.dataTransfer.setData("text/plain", JSON.stringify(data));
   },
+  copy() {
+    if (this.activeCmp) {
+      this.copyObj = this.activeCmp;
+    }
+  },
+  paste() {
+    var config = this.copyObj.save();
+    config.uid = Common.getUid();
+
+    var cmp = Common.createCmpObjByType(config.type);
+    cmp.load(config);
+    cmp.x += 10;
+    cmp.y += 10;
+    this.addChild(this.copyObj.parent.uid, cmp);
+    this.copyObj = cmp;
+    this.activeCmp = cmp;
+    this.outterEventBus.emit("activeCmpChanged", this.activeCmp);
+  },
+  delActive() {
+    if (this.activeCmp && this.activeCmp.parent) {
+      var childs = this.activeCmp.parent.childs;
+      var index = childs.indexOf(this.activeCmp);
+      childs.splice(index, 1);
+      this.activeCmp = null;
+      this.outterEventBus.emit("activeCmpChanged", null);
+    }
+  },
   addChild(parentUid, cmpObj) {
     let parent = this.findCmpObjByUid(parentUid);
     if (parent) {
       cmpObj.parent = parent;
+      cmpObj.eventBus = parent.eventBus;
       parent.childs.push(cmpObj);
     }
   },

@@ -118,6 +118,7 @@ export default class ComponentObjBase {
             let cmpObj = Common.createCmpObjByType(x.type);
             cmpObj.eventBus = this.eventBus;
             cmpObj.load(x);
+            cmpObj.parent = this;
             this[key].push(cmpObj);
             this.childs[this.childs.length - 1].load(x);
           });

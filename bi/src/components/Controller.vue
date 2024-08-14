@@ -192,14 +192,18 @@ export default {
   },
   methods: {
     cmpObjChanged(nv) {
-      this.inner_cmpObj = nv;
-      this.candrag = this.inner_cmpObj.draggable;
-      var position = designHelper.getCmpAbsolutePosition(this.inner_cmpObj);
-      this.x = position.x;
-      this.y = position.y;
-      this.w = this.inner_cmpObj.w;
-      this.h = this.inner_cmpObj.h;
-      this.isShow = true;
+      if (nv) {
+        this.inner_cmpObj = nv;
+        this.candrag = this.inner_cmpObj.draggable;
+        var position = designHelper.getCmpAbsolutePosition(this.inner_cmpObj);
+        this.x = position.x;
+        this.y = position.y;
+        this.w = this.inner_cmpObj.w;
+        this.h = this.inner_cmpObj.h;
+        this.isShow = true;
+      } else {
+        this.isShow = false;
+      }
     },
     onDragStart(e) {
       e.preventDefault();

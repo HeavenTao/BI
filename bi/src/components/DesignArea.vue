@@ -1,5 +1,12 @@
 <template>
-  <div style="position: relative">
+  <div
+    style="position: relative; background-color: red"
+    class="no-tabindex-style"
+    @keyup.delete="del"
+    @keyup.ctrl.c="copy"
+    @keyup.ctrl.v="paste"
+    tabindex="0"
+  >
     <page-layout-cmp v-bind="pageObj"></page-layout-cmp>
     <controller v-bind:cmp-obj="activeCmp"></controller>
   </div>
@@ -28,7 +35,17 @@ export default {
       this.activeCmp = e;
     });
   },
-  methods: {},
+  methods: {
+    copy() {
+      designHelper.copy();
+    },
+    paste() {
+      designHelper.paste();
+    },
+    del() {
+      designHelper.delActive();
+    },
+  },
 };
 </script>
 
