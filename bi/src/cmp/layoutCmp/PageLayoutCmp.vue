@@ -1,11 +1,14 @@
 <template>
-  <div style="user-select: none" :style="style" v-on="cmpEvts()">
-    <component
-      v-for="child in childs"
-      :is="child.type"
-      :key="child.uid"
-      v-bind="child"
-    ></component>
+  <div :style="positionStyle">
+    <div style="user-select: none" :style="style" v-on="eventList">
+      <div v-if="isDesign" :style="designStyle"></div>
+      <component
+        v-for="child in childs"
+        :is="child.type"
+        :key="child.uid"
+        v-bind="child"
+      ></component>
+    </div>
   </div>
 </template>
 
@@ -17,6 +20,7 @@ export default {
   extends: AbsoluteLayoutCmp,
   components: {
     TextCmp,
+    AbsoluteLayoutCmp,
   },
   props: {
     showGrid: {
@@ -28,6 +32,7 @@ export default {
       default: "absolute",
     },
   },
+  methods: {},
 };
 </script>
 

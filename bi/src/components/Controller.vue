@@ -6,60 +6,78 @@
   >
     <div :style="boundStyle"></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="lStyle"
       v-on:mousedown="mousedown($event, 'l')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="tStyle"
       v-on:mousedown="mousedown($event, 't')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="rStyle"
       v-on:mousedown="mousedown($event, 'r')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="bStyle"
       v-on:mousedown="mousedown($event, 'b')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="ltStyle"
       v-on:mousedown="mousedown($event, 'lt')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="rtStyle"
       v-on:mousedown="mousedown($event, 'rt')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="rbStyle"
       v-on:mousedown="mousedown($event, 'rb')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="lbStyle"
       v-on:mousedown="mousedown($event, 'lb')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     ></div>
     <div
-      v-show="candrag"
+      v-show="canReSize"
       v-bind:style="moveStyle"
       v-on:mousedown="mousedown($event, 'm')"
-      v-on:dragstart="onDragStart"
+      v-on:dragstart="onDisableDragStart"
     >
       <q-icon name="mdi-cursor-move" size="sm"></q-icon>
+    </div>
+    <div
+      v-show="canMove"
+      v-bind:style="moveStyle"
+      v-on:mousedown="mousedown($event, 'm')"
+      v-on:dragstart="onDisableDragStart"
+    >
+      <q-icon name="mdi-cursor-move" size="sm"></q-icon>
+    </div>
+
+    <div
+      v-show="canDrag"
+      v-bind:style="dragStyle"
+      draggable="true"
+      v-on:dragstart="onDragStart"
+      v-on:dragend="onDragEnd"
+    >
+      <q-icon name="mdi-drag" size="sm"></q-icon>
     </div>
   </div>
 </template>
@@ -91,7 +109,9 @@ export default {
       cmpObjSnapShot: null,
       thisSnapShot: null,
       startPoint: null,
-      candrag: false,
+      canDrag: false,
+      canMove: false,
+      canReSize: false,
     };
   },
   created() {},
@@ -108,7 +128,7 @@ export default {
         top: "0px",
         width: this.w + "px",
         height: this.h + "px",
-        border: "solid 2px red",
+        border: "solid 2px lightblue",
       };
       return layoutStyle;
     },
@@ -179,8 +199,20 @@ export default {
       basicStyle.cursor = "nesw-resize";
       return basicStyle;
     },
+    dragStyle() {
+      return {
+        pointerEvents: "auto",
+        position: "absolute",
+        width: this.moveBlockWidth + "px",
+        height: this.moveBlockHeight + "px",
+        left: this.w - this.moveBlockWidth + "px",
+        top: 0 + "px",
+        cursor: "grabbing",
+      };
+    },
     moveStyle: function () {
       return {
+        cursor: "move",
         pointerEvents: "auto",
         position: "absolute",
         width: this.moveBlockWidth + "px",
@@ -194,7 +226,9 @@ export default {
     cmpObjChanged(nv) {
       if (nv) {
         this.inner_cmpObj = nv;
-        this.candrag = this.inner_cmpObj.draggable;
+        this.canDrag = this.inner_cmpObj.canDrag;
+        this.canMove = this.inner_cmpObj.canMove;
+        this.canReSize = this.inner_cmpObj.canReSize;
         var position = designHelper.getCmpAbsolutePosition(this.inner_cmpObj);
         this.x = position.x;
         this.y = position.y;
@@ -205,8 +239,14 @@ export default {
         this.isShow = false;
       }
     },
-    onDragStart(e) {
+    onDisableDragStart(e) {
       e.preventDefault();
+    },
+    onDragStart(e) {
+      designHelper.cmpDragStart({ event: e, uid: this.inner_cmpObj.uid });
+    },
+    onDragEnd(e) {
+      designHelper.cmpDragEnd({ event: e, uid: this.inner_cmpObj.uid });
     },
     mousedown(e, dir) {
       this.currentDir = dir;

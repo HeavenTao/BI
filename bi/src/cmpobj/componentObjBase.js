@@ -14,8 +14,12 @@ export default class ComponentObjBase {
   anchor;
   zIndex;
   isDesign;
-  draggable;
   lock;
+  canDrop;
+  showDropState;
+  canDrag;
+  canMove;
+  canReSize;
   borderStyle;
   backgroundStyle;
   type;
@@ -32,9 +36,13 @@ export default class ComponentObjBase {
     this.dock = dockEnum.None.value;
     this.anchor = [];
     this.zIndex = 0;
-    this.draggable = true;
     this.isDesign = true;
+    this.canDrop = false;
+    this.canDrag = true;
+    this.canMove = true;
+    this.canReSize = true;
     this.lock = false;
+    this.showDropState = false;
     this.borderStyle = {
       borderType: "normal", //normal:传统边框 //decoration:装饰器,
       borderSide: "all", //all:全部边框，single//勾选单个边框
@@ -119,6 +127,7 @@ export default class ComponentObjBase {
             cmpObj.eventBus = this.eventBus;
             cmpObj.load(x);
             cmpObj.parent = this;
+            cmpObj.isDesign = this.isDesign;
             this[key].push(cmpObj);
             this.childs[this.childs.length - 1].load(x);
           });
@@ -138,7 +147,17 @@ export default class ComponentObjBase {
     }
   }
   getNotSaveProperties() {
-    let notSave = ["parent", "isDesign", "draggable", "lock", "eventBus"];
+    let notSave = [
+      "parent",
+      "isDesign",
+      "lock",
+      "eventBus",
+      "canDrop",
+      "canDrag",
+      "canMove",
+      "canReSize",
+      "showDropState",
+    ];
     return notSave;
   }
   save() {

@@ -1,5 +1,8 @@
 <template>
-  <div :style="style">hello AbsoluteLayoutCmp</div>
+  <div :style="positionStyle">
+    <div :style="style" v-on="eventList">hello AbsoluteLayoutCmp</div>
+    <div v-if="isDesign" :style="designStyle"></div>
+  </div>
 </template>
 
 <script>

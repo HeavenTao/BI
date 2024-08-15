@@ -44,7 +44,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    active: {
+    canDrag: {
+      type: Boolean,
+      default: false,
+    },
+    canDrop: {
       type: Boolean,
       default: false,
     },
@@ -66,9 +70,21 @@ export default {
       type: Object,
       default: null,
     },
+    showDropState: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      eventList: {},
+    };
+  },
+  created() {
+    this.eventList = this.cmpEvts();
   },
   computed: {
-    style() {
+    positionStyle() {
       var layoutStyle = {
         position: this.position,
         left: this.x + "px",
@@ -76,6 +92,30 @@ export default {
         width: this.w + "px",
         height: this.h + "px",
         zIndex: this.zIndex,
+      };
+      return layoutStyle;
+    },
+    designStyle() {
+      var style = {
+        position: "absolute",
+        left: "0px",
+        top: "0px",
+        width: this.w + "px",
+        height: this.h + "px",
+        pointerEvents: "none",
+        border: "dashed 1px lightblue",
+      };
+
+      if (this.showDropState) {
+        style.backgroundColor = this.canDrop ? "#c8e6c9" : "#ffcdd2c8";
+      }
+
+      return style;
+    },
+    style() {
+      var layoutStyle = {
+        width: this.w + "px",
+        height: this.h + "px",
       };
 
       var backgroundStyle = this.getBackgroundStyle();

@@ -9,20 +9,30 @@ export default {
         return [];
       },
     },
-    canDrop: {
-      type: Boolean,
-      default: false,
+  },
+  watch: {
+    canDrop() {
+      this.canDropChanged();
     },
   },
   methods: {
+    canDropChanged() {
+      this.eventList = this.cmpEvts();
+      console.log("canDropChanged", this.eventList, this.canDrop);
+    },
     cmpEvtsEx() {
-      return {
+      let evts = {
         drop: this.onDrop,
         dragstart: this.onDragStart,
         drag: this.onDrag,
         dragend: this.onDragEnd,
-        dragover: this.onDragOver,
       };
+
+      if (this.canDrop) {
+        evts["dragover"] = this.onDragOver;
+      }
+
+      return evts;
     },
     onDragOver(e) {
       e.preventDefault();

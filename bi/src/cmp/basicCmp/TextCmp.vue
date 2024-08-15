@@ -1,5 +1,10 @@
 <template>
-  <div :style="style" v-on="cmpEvts()">{{ text }}</div>
+  <div :style="positionStyle">
+    <div :style="style" class="full-height" v-on="eventList">
+      {{ text }}
+    </div>
+    <div v-if="isDesign" :style="designStyle"></div>
+  </div>
 </template>
 
 <script>

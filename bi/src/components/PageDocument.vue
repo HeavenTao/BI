@@ -59,7 +59,12 @@ export default {
         },
         {
           label: "布局组件",
-          children: [],
+          children: [
+            {
+              type: "AbsoluteLayoutCmp",
+              label: "AbsoluteLayoutCmp",
+            },
+          ],
         },
       ],
     };

@@ -3,12 +3,16 @@ export default class PageLayoutCmpObj extends AbsoluteLayoutCmpObj {
   showGrid;
   isDarkModel;
 
-  constructor() {
+  constructor(isDesign = true) {
     super();
     this.type = "PageLayoutCmp";
     this.showGrid = false;
     this.isDarkModel = false;
     this.backgroundStyle.color = "white";
+    this.isDesign = isDesign;
+    this.canDrag = false;
+    this.canMove = false;
+    this.canReSize = false;
   }
 
   getNotSaveProperties() {

@@ -6,6 +6,7 @@ export default {
   cmpObjTree: null,
   activeCmp: null,
   copyObj: null,
+  dragInfo: null,
   loadConfig(config) {
     if (config) {
       this.initEmptyTree();
@@ -20,6 +21,7 @@ export default {
   },
   initEmptyTree() {
     this.cmpObjTree = Common.createCmpObjByType("PageLayoutCmp");
+    this.cmpObjTree.isDesign = true;
     this.cmpObjTree.eventBus = this.innerEventBus;
     this.innerEventBus.on("active", (e) => {
       this.onActive(e);
@@ -46,6 +48,34 @@ export default {
   },
   createCmpObjByType(type) {
     return Common.createCmpObjByType(type);
+  },
+  cmpDragStart({ event, uid }) {
+    let cmp = this.findCmpObjByUid(uid);
+    if (cmp) {
+      //主动设置父级禁用，自身禁用，并记录状态
+      this.dragInfo = {
+        config: cmp.save(),
+        info: {
+          parentCanDrop: cmp.parent.canDrop,
+          cmpCanDrop: cmp.canDrop,
+        },
+      };
+
+      cmp.parent.canDrop = false;
+      cmp.canDrop = false;
+      //显示canDrop状态
+      this.setAllProperty([this.cmpObjTree], "showDropState", true);
+
+      // event.dataTransfer.setData("text/plain", JSON.stringify(dragInfo));
+    }
+  },
+  cmpDragEnd({ event, uid }) {
+    let cmp = this.findCmpObjByUid(this.dragInfo.config.uid);
+    cmp.canDrop = this.dragInfo.info.cmpCanDrop;
+    cmp.parent.canDrop = this.dragInfo.info.parentCanDrop;
+
+    this.setAllProperty([this.cmpObjTree], "showDropState", false);
+    this.dragInfo = null;
   },
   cmpLibDragStart(node, e) {
     let item = this.createCmpObjByType(node.type);
@@ -98,6 +128,18 @@ export default {
   },
   findCmpObjByUid(uid) {
     return this.findChildByUid([this.cmpObjTree], uid);
+  },
+  setAllProperty(tree, name, value) {
+    for (let node of tree) {
+      if (name in node) {
+        node[name] = value;
+      }
+
+      if (node.childs && node.childs.length > 0) {
+        const result = this.setAllProperty(node.childs, name, value);
+      }
+    }
+    return null;
   },
   findChildByUid(tree, uid) {
     for (let node of tree) {
