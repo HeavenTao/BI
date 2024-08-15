@@ -317,7 +317,6 @@ export default {
           }
         }
       } else {
-        console.log("Unvalid Move", e.buttons, this.blockDrag);
         this.blockDrag = false;
         document.removeEventListener("mousemove", this.mousemove);
         document.removeEventListener("mouseup", this.mouseup);

@@ -18,7 +18,6 @@ export default {
   methods: {
     canDropChanged() {
       this.eventList = this.cmpEvts();
-      console.log("canDropChanged", this.eventList, this.canDrop);
     },
     cmpEvtsEx() {
       let evts = {
