@@ -248,7 +248,7 @@ export default {
     },
     save() {
       let config = designHelper.saveConfig();
-      console.log(designHelper.cmpObjTree);
+      console.log(config);
     },
     loadData() {
       return dataJson.getData();

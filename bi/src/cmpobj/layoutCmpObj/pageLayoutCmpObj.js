@@ -5,6 +5,7 @@ export default class PageLayoutCmpObj extends AbsoluteLayoutCmpObj {
 
   constructor(isDesign = true) {
     super();
+    this.name = "页面";
     this.type = "PageLayoutCmp";
     this.showGrid = false;
     this.isDarkModel = false;

@@ -79,6 +79,30 @@
     >
       <q-icon name="mdi-drag" size="sm"></q-icon>
     </div>
+
+    <q-badge
+      v-on:mousedown="mousedown($event, 'm')"
+      :style="nameStyle"
+      color="grey"
+      :label="inner_cmpObj.name"
+    />
+
+    <div :style="operateStyle">
+      <q-btn-group>
+        <q-btn icon="mdi-format-size" />
+        <q-btn icon="mdi-palette" />
+        <q-btn-dropdown icon="mdi-menu">
+          <q-list>
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-item-label>Do someth</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+        <q-btn label="父级" @click="activeParent" />
+      </q-btn-group>
+    </div>
   </div>
 </template>
 <script>
@@ -121,6 +145,26 @@ export default {
     },
   },
   computed: {
+    operateStyle() {
+      return {
+        pointerEvents: "auto",
+        position: "absolute",
+        height: 50 + "px",
+        left: 80 + "px",
+        top: -80 + "px",
+      };
+    },
+    nameStyle() {
+      return {
+        pointerEvents: "auto",
+        position: "absolute",
+        width: 80 + "px",
+        height: 20 + "px",
+        left: 0 + "px",
+        top: -22 + "px",
+        cursor: "move",
+      };
+    },
     boundStyle() {
       var layoutStyle = {
         position: "absolute",
@@ -206,6 +250,7 @@ export default {
         width: this.moveBlockWidth + "px",
         height: this.moveBlockHeight + "px",
         left: this.w - this.moveBlockWidth + "px",
+        // left: 0 + "px",
         top: 0 + "px",
         cursor: "grabbing",
       };
@@ -223,6 +268,12 @@ export default {
     },
   },
   methods: {
+    activeParent() {
+      this.inner_cmpObj.eventBus.emit("activeParent", {
+        event: null,
+        uid: this.inner_cmpObj.uid,
+      });
+    },
     cmpObjChanged(nv) {
       if (nv) {
         this.inner_cmpObj = nv;

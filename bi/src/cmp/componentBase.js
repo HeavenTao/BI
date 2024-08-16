@@ -78,6 +78,7 @@ export default {
   data() {
     return {
       eventList: {},
+      clickTimeId: null,
     };
   },
   created() {
@@ -139,6 +140,7 @@ export default {
     cmpEvts() {
       var evts = {
         click: this.onClick,
+        dragover: this.onDragOver,
       };
       extend(true, evts, this.cmpEvtsEx());
       return evts;
@@ -146,10 +148,25 @@ export default {
     cmpEvtsEx() {
       return {};
     },
+    onDragOver(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (this.canDrop) {
+        e.dataTransfer.dropEffect = "copy";
+      } else {
+        e.dataTransfer.dropEffect = "none";
+      }
+    },
     onClick(e) {
       e.stopPropagation();
-      if (this.eventBus) {
-        this.eventBus.emit("active", { event: e, uid: this.uid });
+      if (!e.altKey) {
+        if (this.eventBus) {
+          this.eventBus.emit("active", { event: e, uid: this.uid });
+        }
+      } else {
+        if (this.eventBus) {
+          this.eventBus.emit("activeParent", { event: e, uid: this.uid });
+        }
       }
     },
   },

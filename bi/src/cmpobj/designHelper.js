@@ -1,4 +1,5 @@
 import Common from "src/utils/common";
+import LayoutComponentObjBase from "./layoutComponentObjBase";
 import mitt from "mitt";
 export default {
   innerEventBus: mitt(),
@@ -7,6 +8,7 @@ export default {
   activeCmp: null,
   copyObj: null,
   dragInfo: null,
+  activeParentQueue: [],
   loadConfig(config) {
     if (config) {
       this.initEmptyTree();
@@ -29,17 +31,49 @@ export default {
     this.innerEventBus.on("onDrop", (e) => {
       this.onDrop(e);
     });
+    this.innerEventBus.on("activeParent", (e) => {
+      this.onActiveParent(e);
+    });
+  },
+  onActiveParent({ event, uid }) {
+    if (this.activeParentQueue.length !== 0) {
+      let lastUid = this.activeParentQueue[this.activeParentQueue.length - 1];
+      let cmp = this.findCmpObjByUid(lastUid);
+      if (cmp && cmp.parent) {
+        this.activeParentQueue.push(cmp.parent.uid);
+
+        this.activeCmp = cmp.parent;
+        this.outterEventBus.emit("activeCmpChanged", this.activeCmp);
+      }
+    }
   },
   onDrop({ event, uid }) {
     const dragInfo = this.unPackDragMsg(event);
     let config = dragInfo.config;
+
+    let currentParent = this.findCmpObjByUid(uid);
     let cmpObj = this.createCmpObjByType(config.type);
+    cmpObj.eventBus = currentParent.eventBus;
     cmpObj.load(config);
+
     cmpObj.x = event.offsetX - dragInfo.info.dragOffsetX;
     cmpObj.y = event.offsetY - dragInfo.info.dragOffsetY;
-    this.addChild(uid, cmpObj);
+
+    if (this.addChild(uid, cmpObj)) {
+      let parentUid = config.parentUid;
+      if (parentUid !== "") {
+        let parent = this.findCmpObjByUid(parentUid);
+        if (parent) {
+          parent.removeChild(cmpObj.uid);
+        }
+      }
+
+      this.activeCmp = cmpObj;
+      this.outterEventBus.emit("activeCmpChanged", this.activeCmp);
+    }
   },
   onActive({ event, uid }) {
+    this.activeParentQueue = [uid];
     let cmp = this.findCmpObjByUid(uid);
     if (cmp) {
       this.activeCmp = cmp;
@@ -52,27 +86,51 @@ export default {
   cmpDragStart({ event, uid }) {
     let cmp = this.findCmpObjByUid(uid);
     if (cmp) {
-      //主动设置父级禁用，自身禁用，并记录状态
       this.dragInfo = {
         config: cmp.save(),
         info: {
-          parentCanDrop: cmp.parent.canDrop,
-          cmpCanDrop: cmp.canDrop,
+          cmpUid: cmp.uid,
+          parentUid: cmp.parentUid,
+          dragOffsetX: event.offsetX,
+          dragOffsetY: event.offsetY,
         },
       };
 
+      //主动设置父级禁用，自身禁用，并记录状态
       cmp.parent.canDrop = false;
       cmp.canDrop = false;
+      //自身如果是容器，自身内部的容器都要禁用
+      if (cmp instanceof LayoutComponentObjBase) {
+        let allChilds = [];
+        this.findAllChildList(cmp, allChilds);
+        allChilds.forEach((c) => {
+          if (c instanceof LayoutComponentObjBase) {
+            c.canDrop = false;
+          }
+        });
+      }
+
       //显示canDrop状态
       this.setAllProperty([this.cmpObjTree], "showDropState", true);
 
-      // event.dataTransfer.setData("text/plain", JSON.stringify(dragInfo));
+      event.dataTransfer.setData("text/plain", JSON.stringify(this.dragInfo));
     }
   },
   cmpDragEnd({ event, uid }) {
-    let cmp = this.findCmpObjByUid(this.dragInfo.config.uid);
-    cmp.canDrop = this.dragInfo.info.cmpCanDrop;
-    cmp.parent.canDrop = this.dragInfo.info.parentCanDrop;
+    let cmp = this.findCmpObjByUid(this.dragInfo.info.cmpUid);
+    let parent = this.findCmpObjByUid(this.dragInfo.info.parentUid);
+    if (cmp instanceof LayoutComponentObjBase) {
+      cmp.canDrop = true;
+
+      let allChilds = [];
+      this.findAllChildList(cmp, allChilds);
+      allChilds.forEach((c) => {
+        if (c instanceof LayoutComponentObjBase) {
+          c.canDrop = true;
+        }
+      });
+    }
+    parent.canDrop = true;
 
     this.setAllProperty([this.cmpObjTree], "showDropState", false);
     this.dragInfo = null;
@@ -86,7 +144,6 @@ export default {
       info: {
         dragOffsetX: e.offsetX,
         dragOffsetY: e.offsetY,
-        fromLayoutUid: 0,
       },
     };
     e.dataTransfer.setData("text/plain", JSON.stringify(data));
@@ -104,10 +161,11 @@ export default {
     cmp.load(config);
     cmp.x += 10;
     cmp.y += 10;
-    this.addChild(this.copyObj.parent.uid, cmp);
-    this.copyObj = cmp;
-    this.activeCmp = cmp;
-    this.outterEventBus.emit("activeCmpChanged", this.activeCmp);
+    if (this.addChild(this.copyObj.parent.uid, cmp)) {
+      this.copyObj = cmp;
+      this.activeCmp = cmp;
+      this.outterEventBus.emit("activeCmpChanged", this.activeCmp);
+    }
   },
   delActive() {
     if (this.activeCmp && this.activeCmp.parent) {
@@ -121,10 +179,9 @@ export default {
   addChild(parentUid, cmpObj) {
     let parent = this.findCmpObjByUid(parentUid);
     if (parent) {
-      cmpObj.parent = parent;
-      cmpObj.eventBus = parent.eventBus;
-      parent.childs.push(cmpObj);
+      return parent.addChild(cmpObj);
     }
+    return false;
   },
   findCmpObjByUid(uid) {
     return this.findChildByUid([this.cmpObjTree], uid);
@@ -140,6 +197,14 @@ export default {
       }
     }
     return null;
+  },
+  findAllChildList(cmp, childs) {
+    if (cmp instanceof LayoutComponentObjBase) {
+      cmp.childs.forEach((c) => {
+        childs.push(c);
+        this.findAllChildList(c, childs);
+      });
+    }
   },
   findChildByUid(tree, uid) {
     for (let node of tree) {

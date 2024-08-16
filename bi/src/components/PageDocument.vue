@@ -7,7 +7,7 @@
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="page"> page </q-tab-panel>
       <q-tab-panel name="component">
-        <q-tree :nodes="components" node-key="label">
+        <q-tree default-expand-all :nodes="components" node-key="label">
           <template v-slot:default-header="prop">
             <div
               class="row items-center"
@@ -33,27 +33,11 @@ export default {
       tab: "component",
       components: [
         {
-          label: "基本图形",
-          children: [
-            {
-              label: "line",
-            },
-          ],
-        },
-        {
           label: "基本组件",
           children: [
             {
               type: "TextCmp",
-              label: "TextCmp",
-            },
-          ],
-        },
-        {
-          label: "图表组件",
-          children: [
-            {
-              label: "input",
+              label: "文本组件",
             },
           ],
         },
@@ -62,7 +46,7 @@ export default {
           children: [
             {
               type: "AbsoluteLayoutCmp",
-              label: "AbsoluteLayoutCmp",
+              label: "定位布局",
             },
           ],
         },

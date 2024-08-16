@@ -27,8 +27,10 @@ export default class ComponentObjBase {
 
   constructor() {
     this.parent = null;
+    this.parentUid = "";
     this.uid = Common.getUid();
 
+    this.name = "";
     this.w = 100;
     this.h = 100;
     this.x = 0;
@@ -127,9 +129,9 @@ export default class ComponentObjBase {
             cmpObj.eventBus = this.eventBus;
             cmpObj.load(x);
             cmpObj.parent = this;
+            cmpObj.parentUid = this.uid;
             cmpObj.isDesign = this.isDesign;
-            this[key].push(cmpObj);
-            this.childs[this.childs.length - 1].load(x);
+            this.childs.push(cmpObj);
           });
         } else {
           this[key] = config[key];

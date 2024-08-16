@@ -10,36 +10,16 @@ export default {
       },
     },
   },
-  watch: {
-    canDrop() {
-      this.canDropChanged();
-    },
-  },
   methods: {
-    canDropChanged() {
-      this.eventList = this.cmpEvts();
-    },
     cmpEvtsEx() {
       let evts = {
         drop: this.onDrop,
-        dragstart: this.onDragStart,
-        drag: this.onDrag,
-        dragend: this.onDragEnd,
       };
-
-      if (this.canDrop) {
-        evts["dragover"] = this.onDragOver;
-      }
 
       return evts;
     },
-    onDragOver(e) {
-      e.preventDefault();
-    },
-    onDrag() {},
-    onDragEnd() {},
-    onDragStart() {},
     onDrop(e) {
+      e.preventDefault();
       e.stopPropagation();
       if (this.eventBus) {
         this.eventBus.emit("onDrop", { event: e, uid: this.uid });
