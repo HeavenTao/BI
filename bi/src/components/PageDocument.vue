@@ -48,6 +48,10 @@ export default {
               type: "AbsoluteLayoutCmp",
               label: "定位布局",
             },
+            {
+              type: "GridLayoutCmp",
+              label: "栅格布局",
+            },
           ],
         },
       ],

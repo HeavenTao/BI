@@ -6,6 +6,7 @@
         v-for="child in childs"
         :is="child.type"
         :key="child.uid"
+        :id="child.uid"
         v-bind="child"
       ></component>
     </div>

@@ -1,91 +1,37 @@
 <template>
-  <div
-    style="pointer-events: none; overflow: visible"
-    v-if="isShow"
-    v-bind:style="style"
-  >
+  <div style="pointer-events: none; overflow: visible" v-if="isShow" v-bind:style="style">
     <div :style="boundStyle"></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="lStyle"
-      v-on:mousedown="mousedown($event, 'l')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="tStyle"
-      v-on:mousedown="mousedown($event, 't')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="rStyle"
-      v-on:mousedown="mousedown($event, 'r')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="bStyle"
-      v-on:mousedown="mousedown($event, 'b')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="ltStyle"
-      v-on:mousedown="mousedown($event, 'lt')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="rtStyle"
-      v-on:mousedown="mousedown($event, 'rt')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="rbStyle"
-      v-on:mousedown="mousedown($event, 'rb')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="lbStyle"
-      v-on:mousedown="mousedown($event, 'lb')"
-      v-on:dragstart="onDisableDragStart"
-    ></div>
-    <div
-      v-show="canReSize"
-      v-bind:style="moveStyle"
-      v-on:mousedown="mousedown($event, 'm')"
-      v-on:dragstart="onDisableDragStart"
-    >
+    <div v-show="canReSize" v-bind:style="lStyle" v-on:mousedown="mousedown($event, 'l')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="tStyle" v-on:mousedown="mousedown($event, 't')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="rStyle" v-on:mousedown="mousedown($event, 'r')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="bStyle" v-on:mousedown="mousedown($event, 'b')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="ltStyle" v-on:mousedown="mousedown($event, 'lt')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="rtStyle" v-on:mousedown="mousedown($event, 'rt')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="rbStyle" v-on:mousedown="mousedown($event, 'rb')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="lbStyle" v-on:mousedown="mousedown($event, 'lb')"
+      v-on:dragstart="onDisableDragStart"></div>
+    <div v-show="canReSize" v-bind:style="moveStyle" v-on:mousedown="mousedown($event, 'm')"
+      v-on:dragstart="onDisableDragStart">
       <q-icon name="mdi-cursor-move" size="sm"></q-icon>
     </div>
-    <div
-      v-show="canMove"
-      v-bind:style="moveStyle"
-      v-on:mousedown="mousedown($event, 'm')"
-      v-on:dragstart="onDisableDragStart"
-    >
+    <div v-show="canMove" v-bind:style="moveStyle" v-on:mousedown="mousedown($event, 'm')"
+      v-on:dragstart="onDisableDragStart">
       <q-icon name="mdi-cursor-move" size="sm"></q-icon>
     </div>
 
-    <div
-      v-show="canDrag"
-      v-bind:style="dragStyle"
-      draggable="true"
-      v-on:dragstart="onDragStart"
-      v-on:dragend="onDragEnd"
-    >
+    <div v-show="canDrag" v-bind:style="dragStyle" draggable="true" v-on:dragstart="onDragStart"
+      v-on:dragend="onDragEnd">
       <q-icon name="mdi-drag" size="sm"></q-icon>
     </div>
 
-    <q-badge
-      v-on:mousedown="mousedown($event, 'm')"
-      :style="nameStyle"
-      color="grey"
-      :label="inner_cmpObj.name"
-    />
+    <q-badge v-on:mousedown="mousedown($event, 'm')" :style="nameStyle" color="grey" :label="inner_cmpObj.name" />
 
     <div :style="operateStyle">
       <q-btn-group>
@@ -138,7 +84,7 @@ export default {
       canReSize: false,
     };
   },
-  created() {},
+  created() { },
   watch: {
     cmpObj(nv) {
       this.cmpObjChanged(nv);
@@ -280,7 +226,8 @@ export default {
         this.canDrag = this.inner_cmpObj.canDrag;
         this.canMove = this.inner_cmpObj.canMove;
         this.canReSize = this.inner_cmpObj.canReSize;
-        var position = designHelper.getCmpAbsolutePosition(this.inner_cmpObj);
+        var position = designHelper.getBoundingClientRect(this.inner_cmpObj);
+        console.log("cmpObjChanged", position)
         this.x = position.x;
         this.y = position.y;
         this.w = this.inner_cmpObj.w;

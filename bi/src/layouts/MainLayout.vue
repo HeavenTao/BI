@@ -13,13 +13,7 @@
         </div>
         <div class="col">
           <div class="row no-wrap justify-center items-center content-center">
-            <q-btn
-              flat
-              round
-              dense
-              color="white"
-              icon="mdi-briefcase-upload-outline"
-            >
+            <q-btn flat round dense color="white" icon="mdi-briefcase-upload-outline">
               <q-tooltip>上传组合组件</q-tooltip>
             </q-btn>
             <q-separator vertical dark></q-separator>
@@ -32,40 +26,16 @@
             </q-btn-group>
             <q-separator vertical dark></q-separator>
             <q-btn-group dense flat>
-              <q-btn
-                flat
-                round
-                dense
-                color="white"
-                icon="mdi-align-vertical-top"
-              >
+              <q-btn flat round dense color="white" icon="mdi-align-vertical-top">
                 <q-tooltip>顶端对齐</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                round
-                dense
-                color="white"
-                icon="mdi-align-horizontal-right"
-              >
+              <q-btn flat round dense color="white" icon="mdi-align-horizontal-right">
                 <q-tooltip>右对齐</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                round
-                dense
-                color="white"
-                icon="mdi-align-vertical-bottom"
-              >
+              <q-btn flat round dense color="white" icon="mdi-align-vertical-bottom">
                 <q-tooltip>低端对齐</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                round
-                dense
-                color="white"
-                icon="mdi-align-horizontal-left"
-              >
+              <q-btn flat round dense color="white" icon="mdi-align-horizontal-left">
                 <q-tooltip>左对齐</q-tooltip>
               </q-btn>
               <q-btn flat round dense color="white" icon="mdi-view-parallel">
@@ -80,13 +50,7 @@
               <q-btn flat round dense color="white" icon="mdi-arrow-expand-all">
                 <q-tooltip>宽高与最大相等</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                round
-                dense
-                color="white"
-                icon="mdi-arrow-collapse-all"
-              >
+              <q-btn flat round dense color="white" icon="mdi-arrow-collapse-all">
                 <q-tooltip>宽高与最小相等</q-tooltip>
               </q-btn>
               <q-btn flat round dense color="white" icon="mdi-pan-horizontal">
@@ -95,22 +59,10 @@
               <q-btn flat round dense color="white" icon="mdi-pan-vertical">
                 <q-tooltip>高度与最大相等</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                round
-                dense
-                color="white"
-                icon="mdi-arrow-collapse-horizontal"
-              >
+              <q-btn flat round dense color="white" icon="mdi-arrow-collapse-horizontal">
                 <q-tooltip>宽度与最小相等</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                round
-                dense
-                color="white"
-                icon="mdi-arrow-collapse-vertical"
-              >
+              <q-btn flat round dense color="white" icon="mdi-arrow-collapse-vertical">
                 <q-tooltip>高度与最小相等</q-tooltip>
               </q-btn>
             </q-btn-group>
@@ -138,9 +90,7 @@
             </q-btn>
           </div>
         </div>
-        <div
-          class="row no-wrap justify-end col-3 text-right q-pr-md q-gutter-sm"
-        >
+        <div class="row no-wrap justify-end col-3 text-right q-pr-md q-gutter-sm">
           <q-btn dense flat icon="mdi-format-float-left">
             <q-tooltip>隐藏左侧菜单</q-tooltip>
           </q-btn>
@@ -174,10 +124,7 @@
     <q-page-container>
       <q-page class="column bg-grey-3 q-pa-xs" ref="scroll">
         <div class="col">
-          <design-area
-            :style="{ width: fullWidth + 'px', height: fullHeight + 'px' }"
-            :page-obj="cmpObjTree"
-          >
+          <design-area :style="{ width: fullWidth + 'px', height: fullHeight + 'px' }" :page-obj="cmpObjTree">
           </design-area>
         </div>
         <div class="row items-center justify-end q-py-xs">
@@ -192,12 +139,7 @@
             <q-icon size="sm" name="mdi-minus" v-on:click="minusScale" />
           </div>
           <div>
-            <q-slider
-              v-model="scale"
-              v-bind:min="10"
-              v-bind:max="300"
-              style="width: 200px"
-            />
+            <q-slider v-model="scale" v-bind:min="10" v-bind:max="300" style="width: 200px" />
           </div>
           <div>
             <q-icon size="sm" name="mdi-plus" v-on:click="plusScale" />
@@ -253,8 +195,8 @@ export default {
     loadData() {
       return dataJson.getData();
     },
-    minusScale() {},
-    plusScale() {},
+    minusScale() { },
+    plusScale() { },
   },
 };
 </script>

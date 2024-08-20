@@ -231,7 +231,17 @@ export default {
     }
     return position;
   },
-  unPackDragMsg: function (e) {
+  getBoundingClientRect(cmp) {
+    let el = document.getElementById(cmp.uid)
+    let page = document.getElementById(this.cmpObjTree.uid)
+    if (el && page) {
+      let rect = el.getBoundingClientRect()
+      let pageRect = page.getBoundingClientRect()
+      return { x: rect.x - pageRect.x, y: rect.y - pageRect.y }
+    }
+    return null;
+  },
+  unPackDragMsg: function(e) {
     let data = e.dataTransfer.getData("text/plain");
     if (!data) {
       return;

@@ -1,13 +1,7 @@
 <template>
-  <div
-    style="position: relative; background-color: red"
-    class="no-tabindex-style"
-    @keyup.delete="del"
-    @keyup.ctrl.c="copy"
-    @keyup.ctrl.v="paste"
-    tabindex="0"
-  >
-    <page-layout-cmp v-bind="pageObj"></page-layout-cmp>
+  <div style="position: relative; background-color: red" class="no-tabindex-style" @keyup.delete="del"
+    @keyup.ctrl.c="copy" @keyup.ctrl.v="paste" tabindex="0">
+    <page-layout-cmp v-if="pageObj" :id="pageObj.uid" v-bind="pageObj"></page-layout-cmp>
     <controller v-bind:cmp-obj="activeCmp"></controller>
   </div>
 </template>
@@ -32,7 +26,9 @@ export default {
   },
   created() {
     designHelper.outterEventBus.on("activeCmpChanged", (e) => {
-      this.activeCmp = e;
+      this.$nextTick(() => {
+        this.activeCmp = e;
+      })
     });
   },
   methods: {
