@@ -2,6 +2,7 @@ import { uid } from "quasar";
 import TextCmpObj from "src/cmpobj/basicCmpObj/textCmpObj";
 import PageLayoutCmpObj from "src/cmpobj/layoutCmpObj/pageLayoutCmpObj";
 import AbsoluteLayoutCmpObj from "src/cmpobj/layoutCmpObj/absoluteLayoutCmpObj";
+import GridLayoutCmpObj from "src/cmpobj/layoutCmpObj/gridLayoutCmpObj";
 
 const Common = {
   getUid() {
@@ -16,6 +17,8 @@ const Common = {
         return new PageLayoutCmpObj();
       case "AbsoluteLayoutCmp":
         return new AbsoluteLayoutCmpObj();
+      case "GridLayoutCmp":
+        return new GridLayoutCmpObj()
       default:
         return null;
     }
